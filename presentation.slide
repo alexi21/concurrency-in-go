@@ -1,0 +1,348 @@
+# Concurrency in Go
+A Design Philosophy
+04 May 2022
+
+Alex Karolis
+Developer Experience Squad
+alexander.karolis@immutable.com
+
+: We are going to discuss the background and context to concurrency in Go, and some of the features of the language that enable concurrency
+
+##
+
+.image images/heart-hug.svg _ 300
+
+: Most importantly thank you all for being here!
+
+## Introduction
+
+##
+
+Concurrency in Go is a design philosophy...
+
+Readability is the most important feature of a programming language...
+
+Composition not inheritance...
+
+.image images/gopher1.png _ 300
+
+: I want to start with some simple premises that are hopefully not too controversial
+: Concurrency in Go is a design philosophy
+: Readability is the most important feature of a programming language
+: And, composition not inheritance
+: Each of these go to the core of programming in Go, and I want to try and keep them in mind during this presentation
+
+## Why concurrency in go?
+
+_...the rise of multicore CPUs argued that a language should provide first-class support for some sort of concurrency or parallelism._ **Go FAQ**
+
+.image images/soldering.svg _ 300
+
+: Based on the primitives and idioms of Go, researching the motivation for its creation, and listening to or reading the thoughts of people such as Rob Pike,
+: one of the creators of Go, my thesis is that concurrency in Go is a design philosophy. Which is to say, Go was created with concurrency as one of its core principles.
+: Go allows us to write composable sequential code, that remains reasonable and correct, while also allowing us to create sophisticated concurrent structures.
+: In his talk "Concurrency is not parallelism", Rob Pike argues that the world is not object orientated, it is parallel!
+: However, by and large, programming languages have not been designed with that world view in mind.
+: Given the rise of multicore CPUs, it would seem self-evident that a language should provide first-class support for some sort of concurrency or parallelism
+
+## CSP
+
+The language provides the primitives inspired by Tony Hoare's paper _Communicating Sequential Processes_ (1978).
+
+- Guarded commands (Dijkstra, 1975)
+- A parallel command, specifying concurrent execution of its constituent sequential processes
+- Communication between concurrent processes
+
+These concurrency primitives are the building blocks for a code structure that enables the composition of channels and processes.
+
+: The concurrency primitives and patterns in Go owe a great deal to Tony Hoare's paper _Communicating Sequential Processes_ written in 1978
+: In which he describes three architectural patterns for effectively writing concurrent code
+: Guarded commands as described by Dijkstra in his paper from 1975, "Guarded Commands, Nondeterminancy and Formal Derivations of Programs"
+: A parallel command, specifying concurrent execution of its constituent sequential processes
+: And the necessity of communication between concurrent processes
+: These form the building blocks for a code structure that enables the concurrent composition of communication channels and sequential procedures.
+
+// 1975. Dijkstra, E. J. "Guarded Commands, Nondeterminancy and Formal Derivations of Programs," Comm. of the ACM, 18 (August), 453-457.
+
+##
+
+These concurrent structures abstract the availability and maintenance of parallelism to the Go runtime.
+
+Go was designed and built with concurrency in mind, and directly inspired by CSP.
+
+Concurrency primitives in go are easy to use and written to enable synchronization and shared memory patterns
+
+- Goroutines
+- Channels
+- Select statement
+- Other more primitive primitives
+
+
+: While Go was written to facilitate such concerns as simplifying dependency management, fast compilation, and providing a minimal yet familiar programming interface.
+: It was also designed with the principle of building concurrency into the language, and designing concurrency primitives to be first class citizens,
+: allowing them to be easily parameterized and shared between procedures
+: Go provides tools which allow us to structure our code using concurrency, in a manner that makes concurrency useful.
+: Goroutines provides us with a way of doing things concurrently,
+: channels provide the ability to communicate between processes that are executing concurrently,
+: and the select statement provides a guarded command which allows us to control and multiplex concurrent communication and synchronization.
+
+## Structure vs Execution
+
+Concurrency and parallelism are NOT the same thing!
+
+- _"Concurrency is the composition of independently executing things...parallelism is the simultaneous execution of things"_ - Rob Pike 11/2015
+
+- **Concurrency is about structure**
+
+- **Parallelism is about doing things**
+
+.image images/hiking.svg _ 300
+
+: In the context of Go:
+: Concurrency is a way of structuring your program to make it easier to understand and scalable, and parallelism is just the execution of multiple goroutines in parallel
+: If concurrency is about structure, then it would seem vital that we can both communicate and synchronize the concurrent processes as required.
+: Go provides the tools to do just that, and it does so in a manner that follows the principles of CSP
+
+## Communicating Sequential Processes
+
+## Three principles of CSP
+
+Build each process for sequential execution.
+
+Communicate between these processes using channels, do not share state.
+
+In order to scale... replicate.
+
+: There are three principles to CSP, build each individual process for sequential execution, coordinate these processes using channels
+: - do not share state. Finally, in order to scale, simply replicate the pattern.
+
+## Sequential Process
+
+- A process the occurs in a sequential order
+- A typical sequential process might be read, process, and write
+- Sequential processes are very common in IO operations
+- Read from an input (such as a file)
+- Do something with that data
+- Write to an output (for example to another file)
+
+: A typical sequential process is an IO operation, read a file - process the data - and the write to a file.
+: We can imagine introducing concurrency into the data processing, however we cannot process the data before reading the file, and so on.
+
+## Communicating using channels
+
+- A channel is like the pipe command in Unix and Unix based OS
+- A channel takes information at one end, and passes it out the other end
+- It will continue to function until it is closed
+- It can be shared across multiple readers and writers
+- We can only write to a channel when it is being read, and vice versa, unless the channel is buffered
+- It is a FIFO based queue, things come out of the channel in the same order as which they were passed in
+
+: We can think of a channel in terms of the pipe command, we use the pipe command in UNIX based systems to write the output of one command
+: into the input of the following command. A channel can be shared, and unless buffered stores no data such that it must be read from in order to
+: write to it. If buffered it is like a FIFO queue, data is read from the channel in the same order as it was written.
+
+## Coordination and synchronization
+
+- We can use channels to communicate between sequential processes
+- Each sequential process should be as simple as possible
+- Channels can be shared by the different sequential processes
+- The select statement can be used to orchestrate channels and provide further coordination of the goroutines
+
+.image images/power-to-the-masses.svg _ 250
+
+: Channels can be passed to and from goroutines, and shared across multiple readers and writers.
+: In order to orchestrate the sequential processes we can use the select statement, which we will look at shortly, to control execution using channels
+
+## Composition
+
+The possibility of parallelism is enabled through the correct design of concurrent processes composed together.
+
+_The approach is thus the composition of independently executing functions of otherwise regular procedural code._
+
+At its core, through the semantics of interfaces, Go encourages composition over inheritance.
+
+Interface composition (which is its own subject) demands its own style of writing code, clearly the goal of composition is at the heart of Go.
+
+: The possibility of parallelism is enabled through the correct design of concurrent processes composed together.
+: The approach is thus the composition of independently executing functions of otherwise regular procedural code.
+: At its core, through the semantics of interfaces, Go encourages composition over inheritance.
+: Interface composition (which is its own subject) demands its own style of writing code, clearly the goal of composition is at the heart of Go.
+: The point of this is to understand that the design process should be based on the composition of concurrent processes.
+: This means breaking a problem down into component parts that can be run concurrently and composed together to solve the problem.
+
+## Goroutines
+
+##
+
+.play -numbers 14.go /^func main/,/^}/
+
+## What are goroutines
+
+Go routines are simple, lightweight, and easy to instantiate
+
+- A goroutine is a single unit of work that can be executed independently
+- Every Go program has at least one goroutine, the `main` function
+- A goroutine is a function that runs concurrently with other code
+- Goroutines manage their own stack, and coordinate with OS threads using the `fork-join` model
+- When a goroutine is created it is `scheduled` to run in the Go runtime
+
+: Lets say we instantiate a function in Go. The program will run the function and then exit, before moving to the next sequential part of the program.
+: If instead we define the function call by placing the word "go" in front of it, the function starts running and "concurrently" the program continues to run sequentially.
+: This may or may not occur at the same time, but at an abstract level we can think of the program as forking at that point and now moving conceptually along two paths.
+: They are "like" threads, they run in the same address space, and they are very cheap, they are multiplexed dynamically onto OS threads as required.
+: The system takes care of all scheduling and blocking, and that scheduling and blocking is done independently between all running goroutines.
+
+## Goroutines example
+
+In this example the `main` goroutine exits before the inner goroutine has finished.
+
+.play -numbers 1.go /^func main/,/^}/
+
+## Channels
+
+##
+
+_"Don't communicate by sharing memory; instead, share memory by communicating"_ Rob Pike
+
+.play -numbers 12.go /^func main/,/^}/
+
+## Channel blocking
+
+.play -numbers 9_1.go /^func main/,/^}/
+
+Reading from an empty channel
+
+## Deadlock
+
+.image images/crash-dummy.svg _ 250
+
+A deadlock occurs when a goroutine is blocked without any possibility to get unblocked.
+Go provides a deadlock detector which detects if your entire program deadlocks.
+
+: A deadlock in general terms is when you have two processes both waiting for the other to unblock so they can continue.
+: The deadlock detector in Go only works if the entire program deadlocks
+: In the previous example, the block created by the attempt to read from the empty channel locks the main function indefinitely creating a deadlock
+
+## Channel blocking
+
+.play -numbers 9_2.go /^func main/,/^}/
+
+Writing to a channel that has no receiver
+
+## Channel blocking
+
+.play -numbers 9_3.go /^func main/,/^}/
+
+Reading from an empty buffered channel
+
+## Channel blocking
+
+.play -numbers 9_4.go /^func main/,/^}/
+
+Writing to an empty buffered channel
+
+## Channel blocking
+
+.play -numbers 9_5.go /^func main/,/^}/
+
+Writing to a full buffered channel
+
+## Closing channels
+
+Reading from a closed channel
+
+.play -numbers 10_1.go /^func main/,/^}/
+
+## Closing channels
+
+Writing to a closed channel
+
+.play -numbers 10_2.go /^func main/,/^}/
+
+## Closing channels
+
+Reading from a channel second variable
+
+.play -numbers 10_3.go /^func main/,/^}/
+
+##
+
+.play -numbers 15.go /^func main/,/^}/
+
+- This is how we can `range` over a channel
+
+: the range operator automatically reads the ok value
+: Normally close a channel from the sending side, not the receiving channel
+
+## Channels example
+
+- Channels block when they are called to send information, but have no information to send
+
+.play -numbers 2.go /^func main/,/^}/
+
+## Channels example
+
+- Channels block when they are written to, but have no space in their `buffer`
+
+.play -numbers 7.go /^func main/,/^}/
+
+## The select statement
+
+##
+
+.play -numbers 17.go /^func main/,/^}/
+
+##
+
+The select statement is used to bring channels together and enables us to compose channels and create more sophisticated abstractions
+
+- `select` is used as "switching" statement for channel operations
+- `select` uses case statements, however the case statements are not tested sequentially
+- The execution will block if none of the cases are met
+- The `default` operator can be used as a fall back if otherwise execution is blocked
+
+## Using select to unblock after timeout
+
+## Opening and reading from sockets
+
+.code 8.go /^type result/,/^}/
+
+.code 8.go /^var/,/^}/
+
+##
+
+.code 8.go /^func get/,/^}/
+
+.image images/network.svg _ 250
+
+##
+
+.play -numbers 8.go /^func main/,/^}/
+
+## Using select with done
+
+## Example with goroutine leak
+
+.play -numbers 5.go /^func main/,/^}/
+
+## Create a stream and return when done
+
+.code 6.go /^func create/,/^}/
+
+##
+
+.play -numbers 6.go /^func main/,/^}/
+
+- Get three random integers from the stream
+- close the `done` channel to signal to the createStream function to return
+- block on the stream by reading
+- once the goroutine in createStream exits it closes the stream
+- the read from the `stream` channel unblocks and the sequential process continues
+
+##
+
+.image images/birthday.svg _ 400
+
+.caption All Gophers by [[https://instagram.com/reneefrench][Renee French]]
+
+
