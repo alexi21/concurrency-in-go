@@ -21,24 +21,6 @@ func createStream_(done <-chan interface{}) <-chan int {
 	return stream
 }
 
-func Fanout(
-	done <-chan interface{},
-	input <-chan int,
-	outputOne chan int,
-	outputTwo chan int,
-) {
-	go func() {
-		for {
-			select {
-			case outputOne = <-input:
-			case outputTwo = <-input:
-			case <-done:
-				return
-			}
-		}
-	}()
-}
-
 func main() {
 	done := make(chan interface{})
 	stream := createStream_(done)
@@ -46,5 +28,5 @@ func main() {
 		fmt.Printf("%d: %d\n", i, <-stream)
 	}
 	close(done)
-	<-stream
+	//<-stream
 }

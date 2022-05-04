@@ -1,4 +1,4 @@
-# Concurrency in Go
+Concurrency in Go
 A Design Philosophy
 04 May 2022
 
@@ -8,15 +8,15 @@ alexander.karolis@immutable.com
 
 : We are going to discuss the background and context to concurrency in Go, and some of the features of the language that enable concurrency
 
-##
+*
 
 .image images/heart-hug.svg _ 300
 
 : Most importantly thank you all for being here!
 
-## Introduction
+* Introduction
 
-##
+*
 
 Concurrency in Go is a design philosophy...
 
@@ -30,9 +30,9 @@ Composition not inheritance...
 : Concurrency in Go is a design philosophy
 : Readability is the most important feature of a programming language
 : And, composition not inheritance
-: Each of these go to the core of programming in Go, and I want to try and keep them in mind during this presentation
+: While not exhaustive, each of these go to the core of programming in Go, and I want to try and keep them in mind during this presentation
 
-## Why concurrency in go?
+* Why concurrency in go?
 
 _...the rise of multicore CPUs argued that a language should provide first-class support for some sort of concurrency or parallelism._ **Go FAQ**
 
@@ -45,7 +45,7 @@ _...the rise of multicore CPUs argued that a language should provide first-class
 : However, by and large, programming languages have not been designed with that world view in mind.
 : Given the rise of multicore CPUs, it would seem self-evident that a language should provide first-class support for some sort of concurrency or parallelism
 
-## CSP
+* CSP
 
 The language provides the primitives inspired by Tony Hoare's paper _Communicating Sequential Processes_ (1978).
 
@@ -64,7 +64,7 @@ These concurrency primitives are the building blocks for a code structure that e
 
 // 1975. Dijkstra, E. J. "Guarded Commands, Nondeterminancy and Formal Derivations of Programs," Comm. of the ACM, 18 (August), 453-457.
 
-##
+*
 
 These concurrent structures abstract the availability and maintenance of parallelism to the Go runtime.
 
@@ -86,7 +86,7 @@ Concurrency primitives in go are easy to use and written to enable synchronizati
 : channels provide the ability to communicate between processes that are executing concurrently,
 : and the select statement provides a guarded command which allows us to control and multiplex concurrent communication and synchronization.
 
-## Structure vs Execution
+* Structure vs Execution
 
 Concurrency and parallelism are NOT the same thing!
 
@@ -103,9 +103,9 @@ Concurrency and parallelism are NOT the same thing!
 : If concurrency is about structure, then it would seem vital that we can both communicate and synchronize the concurrent processes as required.
 : Go provides the tools to do just that, and it does so in a manner that follows the principles of CSP
 
-## Communicating Sequential Processes
+* Communicating Sequential Processes
 
-## Three principles of CSP
+* Three principles of CSP
 
 Build each process for sequential execution.
 
@@ -116,7 +116,7 @@ In order to scale... replicate.
 : There are three principles to CSP, build each individual process for sequential execution, coordinate these processes using channels
 : - do not share state. Finally, in order to scale, simply replicate the pattern.
 
-## Sequential Process
+* Sequential Process
 
 - A process the occurs in a sequential order
 - A typical sequential process might be read, process, and write
@@ -128,7 +128,7 @@ In order to scale... replicate.
 : A typical sequential process is an IO operation, read a file - process the data - and the write to a file.
 : We can imagine introducing concurrency into the data processing, however we cannot process the data before reading the file, and so on.
 
-## Communicating using channels
+* Communicating using channels
 
 - A channel is like the pipe command in Unix and Unix based OS
 - A channel takes information at one end, and passes it out the other end
@@ -141,7 +141,7 @@ In order to scale... replicate.
 : into the input of the following command. A channel can be shared, and unless buffered stores no data such that it must be read from in order to
 : write to it. If buffered it is like a FIFO queue, data is read from the channel in the same order as it was written.
 
-## Coordination and synchronization
+* Coordination and synchronization
 
 - We can use channels to communicate between sequential processes
 - Each sequential process should be as simple as possible
@@ -153,7 +153,7 @@ In order to scale... replicate.
 : Channels can be passed to and from goroutines, and shared across multiple readers and writers.
 : In order to orchestrate the sequential processes we can use the select statement, which we will look at shortly, to control execution using channels
 
-## Composition
+* Composition
 
 The possibility of parallelism is enabled through the correct design of concurrent processes composed together.
 
@@ -170,13 +170,13 @@ Interface composition (which is its own subject) demands its own style of writin
 : The point of this is to understand that the design process should be based on the composition of concurrent processes.
 : This means breaking a problem down into component parts that can be run concurrently and composed together to solve the problem.
 
-## Goroutines
+* Goroutines
 
-##
+*
 
 .play -numbers 14.go /^func main/,/^}/
 
-## What are goroutines
+* What are goroutines
 
 Go routines are simple, lightweight, and easy to instantiate
 
@@ -192,27 +192,27 @@ Go routines are simple, lightweight, and easy to instantiate
 : They are "like" threads, they run in the same address space, and they are very cheap, they are multiplexed dynamically onto OS threads as required.
 : The system takes care of all scheduling and blocking, and that scheduling and blocking is done independently between all running goroutines.
 
-## Goroutines example
+* Goroutines example
 
 In this example the `main` goroutine exits before the inner goroutine has finished.
 
 .play -numbers 1.go /^func main/,/^}/
 
-## Channels
+* Channels
 
-##
+*
 
 _"Don't communicate by sharing memory; instead, share memory by communicating"_ Rob Pike
 
 .play -numbers 12.go /^func main/,/^}/
 
-## Channel blocking
+* Channel blocking
 
 .play -numbers 9_1.go /^func main/,/^}/
 
 Reading from an empty channel
 
-## Deadlock
+* Deadlock
 
 .image images/crash-dummy.svg _ 250
 
@@ -223,49 +223,49 @@ Go provides a deadlock detector which detects if your entire program deadlocks.
 : The deadlock detector in Go only works if the entire program deadlocks
 : In the previous example, the block created by the attempt to read from the empty channel locks the main function indefinitely creating a deadlock
 
-## Channel blocking
+* Channel blocking
 
 .play -numbers 9_2.go /^func main/,/^}/
 
 Writing to a channel that has no receiver
 
-## Channel blocking
+* Channel blocking
 
 .play -numbers 9_3.go /^func main/,/^}/
 
 Reading from an empty buffered channel
 
-## Channel blocking
+* Channel blocking
 
 .play -numbers 9_4.go /^func main/,/^}/
 
 Writing to an empty buffered channel
 
-## Channel blocking
+* Channel blocking
 
 .play -numbers 9_5.go /^func main/,/^}/
 
 Writing to a full buffered channel
 
-## Closing channels
+* Closing channels
 
 Reading from a closed channel
 
 .play -numbers 10_1.go /^func main/,/^}/
 
-## Closing channels
+* Closing channels
 
 Writing to a closed channel
 
 .play -numbers 10_2.go /^func main/,/^}/
 
-## Closing channels
+* Closing channels
 
 Reading from a channel second variable
 
 .play -numbers 10_3.go /^func main/,/^}/
 
-##
+*
 
 .play -numbers 15.go /^func main/,/^}/
 
@@ -274,25 +274,25 @@ Reading from a channel second variable
 : the range operator automatically reads the ok value
 : Normally close a channel from the sending side, not the receiving channel
 
-## Channels example
+* Channels example
 
 - Channels block when they are called to send information, but have no information to send
 
 .play -numbers 2.go /^func main/,/^}/
 
-## Channels example
+* Channels example
 
 - Channels block when they are written to, but have no space in their `buffer`
 
 .play -numbers 7.go /^func main/,/^}/
 
-## The select statement
+* The select statement
 
-##
+*
 
 .play -numbers 17.go /^func main/,/^}/
 
-##
+*
 
 The select statement is used to bring channels together and enables us to compose channels and create more sophisticated abstractions
 
@@ -301,35 +301,35 @@ The select statement is used to bring channels together and enables us to compos
 - The execution will block if none of the cases are met
 - The `default` operator can be used as a fall back if otherwise execution is blocked
 
-## Using select to unblock after timeout
+* Using select to unblock after timeout
 
-## Opening and reading from sockets
+* Opening and reading from sockets
 
 .code 8.go /^type result/,/^}/
 
 .code 8.go /^var/,/^}/
 
-##
+*
 
 .code 8.go /^func get/,/^}/
 
 .image images/network.svg _ 250
 
-##
+*
 
 .play -numbers 8.go /^func main/,/^}/
 
-## Using select with done
+* Using select with done
 
-## Example with goroutine leak
+* Example with goroutine leak
 
 .play -numbers 5.go /^func main/,/^}/
 
-## Create a stream and return when done
+* Create a stream and return when done
 
 .code 6.go /^func create/,/^}/
 
-##
+*
 
 .play -numbers 6.go /^func main/,/^}/
 
@@ -339,7 +339,7 @@ The select statement is used to bring channels together and enables us to compos
 - once the goroutine in createStream exits it closes the stream
 - the read from the `stream` channel unblocks and the sequential process continues
 
-##
+*
 
 .image images/birthday.svg _ 400
 
