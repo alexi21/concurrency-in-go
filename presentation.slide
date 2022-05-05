@@ -8,15 +8,15 @@ alexander.karolis@immutable.com
 
 : We are going to discuss the background and context to concurrency in Go, and some of the features of the language that enable concurrency
 
-*
+* Thank you
 
-.image images/heart-hug.svg _ 300
+.image images/heart-hug.png _ 300
 
 : Most importantly thank you all for being here!
 
 * Introduction
 
-*
+* Design
 
 Concurrency in Go is a design philosophy...
 
@@ -36,7 +36,7 @@ Composition not inheritance...
 
 _...the rise of multicore CPUs argued that a language should provide first-class support for some sort of concurrency or parallelism._ **Go FAQ**
 
-.image images/soldering.svg _ 300
+.image images/soldering.png _ 300
 
 : Based on the primitives and idioms of Go, researching the motivation for its creation, and listening to or reading the thoughts of people such as Rob Pike,
 : one of the creators of Go, my thesis is that concurrency in Go is a design philosophy. Which is to say, Go was created with concurrency as one of its core principles.
@@ -64,7 +64,7 @@ These concurrency primitives are the building blocks for a code structure that e
 
 // 1975. Dijkstra, E. J. "Guarded Commands, Nondeterminancy and Formal Derivations of Programs," Comm. of the ACM, 18 (August), 453-457.
 
-*
+* CSP
 
 These concurrent structures abstract the availability and maintenance of parallelism to the Go runtime.
 
@@ -96,7 +96,7 @@ Concurrency and parallelism are NOT the same thing!
 
 - **Parallelism is about doing things**
 
-.image images/hiking.svg _ 300
+.image images/hiking.png _ 300
 
 : In the context of Go:
 : Concurrency is a way of structuring your program to make it easier to understand and scalable, and parallelism is just the execution of multiple goroutines in parallel
@@ -148,7 +148,7 @@ In order to scale... replicate.
 - Channels can be shared by the different sequential processes
 - The select statement can be used to orchestrate channels and provide further coordination of the goroutines
 
-.image images/power-to-the-masses.svg _ 250
+.image images/power-to-the-masses.png _ 250
 
 : Channels can be passed to and from goroutines, and shared across multiple readers and writers.
 : In order to orchestrate the sequential processes we can use the select statement, which we will look at shortly, to control execution using channels
@@ -172,7 +172,7 @@ Interface composition (which is its own subject) demands its own style of writin
 
 * Goroutines
 
-*
+* Example
 
 .play -numbers 14.go /^func main/,/^}/
 
@@ -200,7 +200,7 @@ In this example the `main` goroutine exits before the inner goroutine has finish
 
 * Channels
 
-*
+* Channels
 
 _"Don't communicate by sharing memory; instead, share memory by communicating"_ Rob Pike
 
@@ -214,7 +214,7 @@ Reading from an empty channel
 
 * Deadlock
 
-.image images/crash-dummy.svg _ 250
+.image images/crash-dummy.png _ 250
 
 A deadlock occurs when a goroutine is blocked without any possibility to get unblocked.
 Go provides a deadlock detector which detects if your entire program deadlocks.
@@ -265,7 +265,7 @@ Reading from a channel second variable
 
 .play -numbers 10_3.go /^func main/,/^}/
 
-*
+* Closing channels
 
 .play -numbers 15.go /^func main/,/^}/
 
@@ -288,11 +288,11 @@ Reading from a channel second variable
 
 * The select statement
 
-*
+* Select
 
 .play -numbers 17.go /^func main/,/^}/
 
-*
+* Select
 
 The select statement is used to bring channels together and enables us to compose channels and create more sophisticated abstractions
 
@@ -309,13 +309,13 @@ The select statement is used to bring channels together and enables us to compos
 
 .code 8.go /^var/,/^}/
 
-*
+* Select
 
 .code 8.go /^func get/,/^}/
 
-.image images/network.svg _ 250
+.image images/network.png _ 250
 
-*
+* Select
 
 .play -numbers 8.go /^func main/,/^}/
 
@@ -341,7 +341,7 @@ The select statement is used to bring channels together and enables us to compos
 
 *
 
-.image images/birthday.svg _ 400
+.image images/birthday.png _ 400
 
 .caption All Gophers by [[https://instagram.com/reneefrench][Renee French]]
 
