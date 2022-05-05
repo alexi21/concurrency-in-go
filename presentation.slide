@@ -329,7 +329,7 @@ The select statement is used to bring channels together and enables us to compos
 
 .code 6.go /^func create/,/^}/
 
-*
+* Create a stream and return when done
 
 .play -numbers 6.go /^func main/,/^}/
 
@@ -339,7 +339,7 @@ The select statement is used to bring channels together and enables us to compos
 - once the goroutine in createStream exits it closes the stream
 - the read from the `stream` channel unblocks and the sequential process continues
 
-*
+* Questions
 
 .image images/birthday.png _ 400
 
