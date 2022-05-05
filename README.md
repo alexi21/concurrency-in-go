@@ -6,7 +6,7 @@ Presented at the IMX Bootcamp
 
 Link below will take you to the presentation
 
-* [Golang Basics](https://talks.godoc.org/github.com/alexi21/concurrency-in-go/presentation.slide)
+## [Concurrency in Go Presentation](https://talks.godoc.org/github.com/alexi21/concurrency-in-go/presentation.slide)
 
 ### Speaker notes:
 
