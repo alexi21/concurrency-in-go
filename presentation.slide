@@ -90,7 +90,7 @@ Concurrency primitives in go are easy to use and written to enable synchronizati
 
 Concurrency and parallelism are NOT the same thing!
 
-- _"Concurrency is the composition of independently executing things...parallelism is the simultaneous execution of things"_ - Rob Pike 11/2015
+- "Concurrency is the composition of independently executing things...parallelism is the simultaneous execution of things" - Rob Pike 11/2015
 
 - **Concurrency is about structure**
 
